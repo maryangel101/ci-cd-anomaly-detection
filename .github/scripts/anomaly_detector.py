@@ -40,7 +40,7 @@ def analyze_logs_with_model(log_content, model_url):
             return None
         
         # Construct the full prediction endpoint URL
-        prediction_url = urljoin(model_url.rstrip('/') + '/', 'predict')
+        prediction_url = model_url.rstrip('/')
         print(f"🔗 Calling model API: {prediction_url}")
         
         response = requests.post(
