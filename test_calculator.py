@@ -17,11 +17,11 @@ def test_divide():
     assert divide(10, 2) == 5
     assert divide(9, 3) == 3
 
-# Flaky test that fails randomly
-def test_flaky():
-    if random.random() < 0.3:  # 30% chance to fail
-        assert False, "Flaky test failed randomly"
-    assert True
+# # Flaky test that fails randomly
+# def test_flaky():
+#     if random.random() < 0.3:  # 30% chance to fail
+#         assert False, "Flaky test failed randomly"
+#     assert True
 
 # Always failing test (comment out initially)
 # def test_always_fail():
