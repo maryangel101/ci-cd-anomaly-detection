@@ -1,0 +1,6 @@
+# Model files (too large for git)
+anomaly_model.pkl
+vectorizer.pkl
+*.pkl
+__pycache__/
+*.pyc
