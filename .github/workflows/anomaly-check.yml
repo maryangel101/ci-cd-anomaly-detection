@@ -1,5 +1,10 @@
 name: Anomaly Detection Check
 
+# Add permissions for issue creation
+permissions:
+  issues: write
+  contents: read
+
 on:
   workflow_run:
     workflows: ["CI Pipeline"]
@@ -10,6 +15,12 @@ jobs:
   anomaly-check:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion != 'cancelled' }}
+    
+    # Add environment variables at job level
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      WORKFLOW_RUN_ID: ${{ github.event.workflow_run.id }}
+      MODEL_API_URL: ${{ secrets.MODEL_API_URL }}
     
     steps:
     - name: Checkout code
@@ -25,10 +36,6 @@ jobs:
         pip install requests
     
     - name: Download and analyze workflow logs
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        WORKFLOW_RUN_ID: ${{ github.event.workflow_run.id }}
-        MODEL_API_URL: ${{ secrets.MODEL_API_URL }}  # Set this in your repo secrets
       run: |
         python .github/scripts/anomaly_detector.py
     
