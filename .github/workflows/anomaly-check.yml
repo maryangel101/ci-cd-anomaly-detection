@@ -1,6 +1,6 @@
 name: Anomaly Detection Check
 
-# Add permissions for issue creation
+
 permissions:
   issues: write
   contents: read
@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion != 'cancelled' }}
     
-    # Add environment variables at job level
+
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       WORKFLOW_RUN_ID: ${{ github.event.workflow_run.id }}
