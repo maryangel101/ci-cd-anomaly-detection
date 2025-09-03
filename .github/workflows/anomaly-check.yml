@@ -1,0 +1,46 @@
+name: Anomaly Detection Check
+
+on:
+  workflow_run:
+    workflows: ["CI Pipeline"]
+    types:
+      - completed
+
+jobs:
+  anomaly-check:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion != 'cancelled' }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.9'
+    
+    - name: Install dependencies
+      run: |
+        pip install requests
+    
+    - name: Download and analyze workflow logs
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        WORKFLOW_RUN_ID: ${{ github.event.workflow_run.id }}
+        MODEL_API_URL: ${{ secrets.MODEL_API_URL }}  # Set this in your repo secrets
+      run: |
+        python .github/scripts/anomaly_detector.py
+    
+    - name: Create issue if anomaly detected
+      if: failure()
+      uses: actions/github-script@v6
+      with:
+        script: |
+          github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: 'CI/CD Anomaly Detected',
+            body: 'An anomaly was detected in the recent CI/CD pipeline run. Please investigate.',
+            labels: ['anomaly', 'ci-cd']
+          })
