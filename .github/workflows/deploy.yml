@@ -8,11 +8,17 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      
+      - name: Setup Git
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          
       - name: Deploy to Hugging Face
-        uses: huggingface/huggingface_hub@main
-        with:
-          huggingface_token: ${{ secrets.HUGGINGFACE_TOKEN }}
-          huggingface_repo: your-username/ci-cd-anomaly-detection
-          git_config_user: "github-actions"
-          git_config_email: "github-actions@github.com"
+        run: |
+          # Add Hugging Face remote with token authentication
+          git remote add huggingface https://${{ secrets.HF_USERNAME }}:${{ secrets.HF_TOKEN }}@huggingface.co/spaces/${{ secrets.HF_USERNAME }}/ci-cd-anomaly-detection
+          
+          # Push to Hugging Face
+          git push huggingface main --force
